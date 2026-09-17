@@ -976,7 +976,7 @@ footer{
 <div class="navbar">
 
     <div class="logo-area">
-        <img src="logo.png" alt="MUQEET Logo">
+        <img src="muqeet1218.png" alt="MUQEET Logo">
         <div class="logo-text">
             MUQ<span>EET</span>
         </div>
@@ -1380,16 +1380,7 @@ footer{
 
 /* =====================================================
    MUQEET PRODUCTS
-   =====================================================
-
-   یہاں بعد میں Daraz سے حاصل شدہ products add ہوں گے۔
-
-   price = ہماری website کی selling price
-   category = Men / Women / Kids / Digital
-
-   image میں اپنی product image کا نام دیں۔
-
-===================================================== */
+   ===================================================== */
 
 const products = [
 
@@ -1488,6 +1479,10 @@ const products = [
 
 let cart = [];
 
+// Initialize products on load
+document.addEventListener("DOMContentLoaded", () => {
+    displayProducts();
+});
 
 /* ================= DISPLAY PRODUCTS ================= */
 
@@ -1750,7 +1745,7 @@ function closeCart(){
 }
 
 
-/* ================= SEARCH ================= */
+/* ================= SEARCH & FILTERS ================= */
 
 function searchProducts(){
 
@@ -1763,172 +1758,65 @@ function searchProducts(){
     const category =
         document.getElementById("categoryFilter").value;
 
-    let result = products.filter(product => {
-
-        const matchesSearch =
-            product.name.toLowerCase().includes(query) ||
-            product.category.toLowerCase().includes(query) ||
-            product.description.toLowerCase().includes(query);
-
-        const matchesCategory =
-            category === "All" ||
-            product.category === category;
-
-        return matchesSearch && matchesCategory;
-
+    let filtered = products.filter(p => {
+        const matchesQuery = p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+        const matchesCategory = category === "All" || p.category === category;
+        return matchesQuery && matchesCategory;
     });
 
-    displayProducts(result);
-
+    displayProducts(filtered);
 }
-
-
-/* ================= FILTER ================= */
 
 function filterProducts(){
-
     searchProducts();
-
 }
 
-
-/* ================= CATEGORY BUTTON ================= */
-
-function filterCategory(category){
-
-    document.getElementById("categoryFilter").value =
-        category;
-
-    document.getElementById("shop")
-        .scrollIntoView();
-
+function filterCategory(cat){
+    document.getElementById("categoryFilter").value = cat;
     searchProducts();
-
 }
-
-
-/* ================= SORT ================= */
 
 function sortProducts(){
-
-    const value =
-        document.getElementById("sortFilter").value;
-
+    const sortVal = document.getElementById("sortFilter").value;
     let list = [...products];
 
-    if(value === "low"){
-        list.sort((a,b)=>a.price-b.price);
-    }
-
-    if(value === "high"){
-        list.sort((a,b)=>b.price-a.price);
-    }
-
-    if(value === "name"){
-        list.sort((a,b)=>a.name.localeCompare(b.name));
+    if(sortVal === "low"){
+        list.sort((a,b) => a.price - b.price);
+    }else if(sortVal === "high"){
+        list.sort((a,b) => b.price - a.price);
+    }else if(sortVal === "name"){
+        list.sort((a,b) => a.name.localeCompare(b.name));
     }
 
     displayProducts(list);
-
 }
-
-
-/* ================= SEARCH FOCUS ================= */
 
 function focusSearch(){
-
-    document.getElementById("shop")
-        .scrollIntoView();
-
-    setTimeout(()=>{
-        document.getElementById("search").focus();
-    },500);
-
+    document.getElementById("search").focus();
 }
 
-
-/* ================= WISHLIST ================= */
-
-function wishlist(id){
-
-    showToast("Added to wishlist!");
-
-}
-
-
-/* ================= TOAST ================= */
-
-function showToast(message){
-
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent = message;
-
+function showToast(msg){
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
     toast.classList.add("show");
-
     setTimeout(()=>{
         toast.classList.remove("show");
     },2000);
-
 }
 
-
-/* ================= CHECKOUT ================= */
+function wishlist(id){
+    showToast("Added to wishlist!");
+}
 
 function checkout(){
-
     if(cart.length === 0){
-
-        showToast("Your cart is empty!");
-
+        alert("Your cart is empty!");
         return;
-
     }
-
-    let message =
-        "MUQEET ORDER%0A%0A";
-
-    cart.forEach(item => {
-
-        message +=
-            item.name +
-            " x " +
-            item.qty +
-            " = Rs. " +
-            (item.price * item.qty).toLocaleString() +
-            "%0A";
-
-    });
-
-    const total =
-        cart.reduce(
-            (sum,item)=>sum+(item.price*item.qty),
-            0
-        );
-
-    message +=
-        "%0ATotal: Rs. " +
-        total.toLocaleString();
-
-    message +=
-        "%0A%0AI want to place this order.";
-
-    window.open(
-        "https://wa.me/923299409076?text=" + message,
-        "_blank"
-    );
-
+    const message = encodeURIComponent(`Hello MUQEET, I want to place an order for items in my cart.`);
+    window.open(`https://wa.me/923299409076?text=${message}`, "_blank");
 }
 
-
-/* ================= INITIAL LOAD ================= */
-
-displayProducts();
-
-updateCart();
-
 </script>
-
 </body>
 </html>
